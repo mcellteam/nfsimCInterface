@@ -69,14 +69,14 @@ class NFSim:
 
 
 if __name__ == "__main__":
-    nfsim = NFSim('./debug/libnfsim_c.so')
+    nfsim = NFSim('./lib/libnfsim_c.so')
 
-    nfsim.init_nfsim("cbngl_test_empty.xml", 0)
+    nfsim.init_nfsim("fceri.mdlr_total.xml", 0)
     nfsim.reset_system()
     #nfsim.init_system_nauty({"c:a~NO_STATE!4!2,c:l~NO_STATE!3,c:l~NO_STATE!3!0,m:Lig!2!1,m:Rec!0":1})
     #nfsim.init_system_nauty({"c:a~NO_STATE!4!2,c:l~NO_STATE!3,c:l~NO_STATE!3!0,m:Lig!1!2,m:Rec!0,":1})
     #print '---', nfsim.querySystemStatus("observables")
-    nfsim.init_system_nauty({"c:l~NO_STATE!3!1,c:r~NO_STATE!2!0,m:L@EC!1,m:R@PM!0,":1})
+    nfsim.init_system_nauty({b"c:SH2~NO_STATE!5,c:U~NO_STATE!5!3,c:a~NO_STATE!6,c:b~Y!6!1,c:g~Y!6,m:Lyn@PM!0!1,m:Rec@PM!3!4!2,":1})
     print('----', nfsim.querySystemStatus("complex"))
     
     
