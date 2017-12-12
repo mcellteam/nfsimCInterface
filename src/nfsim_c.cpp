@@ -124,13 +124,13 @@ int outputNFSimObservables_c(int seed){
     // Remove extension if present.
     std::stringstream ss;
     // XXX: Shouldn't hardcode in a set padding value.
-    ss << std::setw(4) << std::setfill('0') << seed;
+    ss << std::setw(5) << std::setfill('0') << seed;
     std::string seed_str = ss.str();
 
-    std::string gdat_filename = inputFile + "." + seed_str + ".gdat";
+    std::string gdat_filename = inputFile + ".seed_" + seed_str + ".gdat";
     outputNFSimObservablesF_c(gdat_filename.c_str());
 
-    std::string rxn_gdat_filename = inputFile + "_reactions." + seed_str + ".gdat";
+    std::string rxn_gdat_filename = inputFile + "_reactions.seed_" + seed_str + ".gdat";
     outputNFSimReactionsF_c((rxn_gdat_filename).c_str());
 
 }
