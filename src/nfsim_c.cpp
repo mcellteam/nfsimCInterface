@@ -5,6 +5,8 @@
 #include <NFapi.hh>
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <iomanip>
 
 typedef std::map<std::string, std::string> Map;
 typedef std::vector<Map*> MapVector;
@@ -113,15 +115,23 @@ int logNFSimReactions_c(const char* reactionName){
 
 
 
-int outputNFSimObservables_c(){
+int outputNFSimObservables_c(int seed){
     const size_t last_slash_idx = inputFile.find_last_of("\\/");
     if (std::string::npos != last_slash_idx)
     {
         inputFile.erase(0, last_slash_idx + 1);
     }
     // Remove extension if present.
-    outputNFSimObservablesF_c((inputFile + ".gdat").c_str());
-    outputNFSimReactionsF_c((inputFile + "_reactions.gdat").c_str());
+    std::stringstream ss;
+    // XXX: Shouldn't hardcode in a set padding value.
+    ss << std::setw(4) << std::setfill('0') << seed;
+    std::string seed_str = ss.str();
+
+    std::string gdat_filename = inputFile + "." + seed_str + ".gdat";
+    outputNFSimObservablesF_c(gdat_filename.c_str());
+
+    std::string rxn_gdat_filename = inputFile + "_reactions." + seed_str + ".gdat";
+    outputNFSimReactionsF_c((rxn_gdat_filename).c_str());
 
 }
 

@@ -110,7 +110,7 @@ extern "C" {
     int logNFSimObservables_c(double time);
     int logNFSimReactions_c(const char*);
     //stream observableSet to file
-    int outputNFSimObservables_c();
+    int outputNFSimObservables_c(int seed);
     int outputNFSimObservablesF_c(const char*);
     int outputNFSimReactionsF_c(const char* outputfilename);
     
