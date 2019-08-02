@@ -12,6 +12,7 @@ typedef std::map<std::string, std::string> Map;
 typedef std::vector<Map*> MapVector;
 typedef std::map<std::string, MapVector*> MapVectorMap;
 
+const size_t MAX_OBERVABLES_SIZE = 10000;
 
 map<string,int> preInitMap;
 vector<map<string, double>> observableLog;
@@ -83,8 +84,33 @@ int constructNauty_c(const char* nautyString, const int seedNumber){
     return 0;
 }
 
+
+static void getSeedStr(int seed, std::string& seedStr) {
+  std::stringstream ss;
+  // XXX: Shouldn't hardcode in a set padding value.
+  ss << std::setw(5) << std::setfill('0') << seed;
+  seedStr = ss.str();
+}
+
+static void removeDirFromInputFileIfNeeded() {
+    const size_t last_slash_idx = inputFile.find_last_of("\\/");
+    if (std::string::npos != last_slash_idx)
+    {
+        // erase everything up to the first slash (included)
+        inputFile.erase(0, last_slash_idx + 1);
+    }
+}
+
+static void getGDatFilename(const std::string& seedStr, std::string& gdatFilename) {
+    gdatFilename = inputFile + ".seed_" + seedStr + ".gdat";
+}
+
+static void getRnxGDatFilename(const std::string& seedStr, std::string& rnxGDatFilename) {
+    rnxGDatFilename  = inputFile + "_reactions.seed_" + seedStr + ".gdat";
+}
+
  
-int logNFSimObservables_c(double timePoint){
+int logNFSimObservables_c(double timePoint, int seed){
 
     //memoization
     map<string, double> currentObservables;
@@ -102,10 +128,24 @@ int logNFSimObservables_c(double timePoint){
         preInitMapCollection[preInitMap] = currentObservables;
     }
 
+    // here somewhere, we need to write the data out and clear the arrays
 
     observableLog.push_back(currentObservables);
     observableTimes.push_back(timePoint);
     //reactionLog.push_back(currentReactions);
+
+    if (observableLog.size() >= MAX_OBERVABLES_SIZE) {
+      removeDirFromInputFileIfNeeded();
+      std::string seedStr;
+      getSeedStr(seed, seedStr);
+      std::string gdatFilename;
+      getGDatFilename(seedStr, gdatFilename);
+
+      // dump only the observables, reactions need to be dumped after simulation has finished (they are also much smaller)
+      outputNFSimObservablesF_c(gdatFilename.c_str());
+      observableLog.clear();
+      observableTimes.clear();
+    }
 
 }
 
@@ -113,25 +153,21 @@ int logNFSimReactions_c(const char* reactionName){
     currentReactions[std::string(reactionName)] += 1;
 }
 
-
-
 int outputNFSimObservables_c(int seed){
-    const size_t last_slash_idx = inputFile.find_last_of("\\/");
-    if (std::string::npos != last_slash_idx)
-    {
-        inputFile.erase(0, last_slash_idx + 1);
-    }
-    // Remove extension if present.
-    std::stringstream ss;
-    // XXX: Shouldn't hardcode in a set padding value.
-    ss << std::setw(5) << std::setfill('0') << seed;
-    std::string seed_str = ss.str();
 
-    std::string gdat_filename = inputFile + ".seed_" + seed_str + ".gdat";
-    outputNFSimObservablesF_c(gdat_filename.c_str());
+    removeDirFromInputFileIfNeeded();
 
-    std::string rxn_gdat_filename = inputFile + "_reactions.seed_" + seed_str + ".gdat";
-    outputNFSimReactionsF_c((rxn_gdat_filename).c_str());
+    std::string seedStr;
+    getSeedStr(seed, seedStr);
+
+    std::string gdatFilename;
+    getGDatFilename(seedStr, gdatFilename);
+
+    outputNFSimObservablesF_c(gdatFilename.c_str());
+
+    std::string rnxGDatFilename;
+    getRnxGDatFilename(seedStr, rnxGDatFilename);
+    outputNFSimReactionsF_c(rnxGDatFilename.c_str());
 
 }
 
@@ -139,14 +175,24 @@ int outputNFSimObservables_c(int seed){
 int outputNFSimObservablesF_c(const char* outputfilename){
     ofstream gdatFile;
 
-    gdatFile.open(outputfilename);
+    gdatFile.open(outputfilename, ios_base::app); // appending to the file, the file is erased when simulation starts
+
+
+    // if this is the first run, print header
+    if (gdatFile.tellp() == 0) {
+        gdatFile << "time, ";
+        for(auto it: observableLog[0]){
+            gdatFile << it.first << ", ";
+        }
+        gdatFile <<"\n";
+    }
+
+    // collect keys that are usually related to molecule names
     vector<string> keys;
-    gdatFile << "time, ";
     for(auto it: observableLog[0]){
-        gdatFile << it.first << ", ";
         keys.push_back(it.first);
     }
-    gdatFile <<"\n";
+
     for(int i=0; i < observableLog.size(); i++){
         auto line = observableLog[i];
         gdatFile << observableTimes[i] << ", ";
