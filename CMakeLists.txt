@@ -56,4 +56,5 @@ add_library(${PROJECT_NAME}_static STATIC ${SRC_FILES})
 # -- nfsimCInterface (dynamic) --
 
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
+target_link_libraries(${PROJECT_NAME} NFsim_static_fpic)
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE 1)
