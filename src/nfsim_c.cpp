@@ -2,7 +2,7 @@
 
 #include "nfsim_c.h"
 #include "nfsim_c_structs.h"
-#include <NFapi.hh>
+#include "NFapi.hh"
 #include <iostream>
 #include <fstream>
 #include <sstream>
