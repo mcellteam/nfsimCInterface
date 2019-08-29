@@ -31,11 +31,18 @@ extern "C" {
 
 
 // Inside this "extern C" block, I can define C functions that are able to call C++ code
-int setupNFSim_c(const char* filename, int verbose) {
+int setupNFSim_c(const char* filename, int seed, int verbose) {
     //nfapi returns bool
     inputFile = std::string(filename);
-    if(NFapi::setupNFSim(filename, verbose))
+    if(NFapi::setupNFSim(filename, verbose)) {
+        unsigned long unsigned_seed = (long)seed;
+        if (seed < 0) {
+          std::cout << "Warning: Provided seed value " << seed <<
+              " is lower than 0, NFSim initialization will use it as unsigned value " << unsigned_seed << ".\n";
+        }
+        NFutil::SEED_RANDOM(unsigned_seed); // we must set seed, otherwise a random seed from time() is used
         return 0;
+    }
     return -1;
 }
 

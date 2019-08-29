@@ -11,8 +11,8 @@ int main() {
     const char** species = malloc(1 * sizeof(char*));
     species[0] = iSpecies;
     static const int seeds[1]= {1};
-    int result = setupNFSim_c("fceri3.mdlr_total.xml", 0);
-    //int result = setupNFSim_c("cbngl_test_empty.xml", 0);
+    int result = setupNFSim_c("fceri3.mdlr_total.xml", 1, 0);
+    //int result = setupNFSim_c("cbngl_test_empty.xml", 1, 0);
     if(result != 0){
         return -1;
     }

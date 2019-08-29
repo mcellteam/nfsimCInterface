@@ -81,7 +81,7 @@ extern "C" {
 
 
     //loads up an xml file and keeps it in memory
-    int setupNFSim_c(const char*,int);
+    int setupNFSim_c(const char* filename, int seed, int verbose);
 
     //restores the nfsim system before molecule seeding
     int resetSystem_c();
