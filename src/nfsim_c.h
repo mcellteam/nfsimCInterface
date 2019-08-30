@@ -57,7 +57,7 @@ extern "C" {
     };
 
     struct queryOptions{
-        const char** initKeys;
+        char** initKeys;
         const int* initValues;
 
         const char** optionKeys;
