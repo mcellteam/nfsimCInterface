@@ -22,6 +22,10 @@ vector<double> observableTimes;
 
 map<map<string,int>, map<string, double>> preInitMapCollection;
 
+// list of files to which we already wrote some data in this run,
+// if a file is not present, we must remove it first
+set<string> observableFilesWrittenThisRun;
+
 static std::string inputFile;
 
 
@@ -43,6 +47,8 @@ int setupNFSim_c(const char* filename, int seed, int verbose) {
         NFutil::SEED_RANDOM(unsigned_seed); // we must set seed, otherwise a random seed from time() is used
         return 0;
     }
+    // erase
+
     return -1;
 }
 
@@ -135,8 +141,6 @@ int logNFSimObservables_c(double timePoint, int seed){
         preInitMapCollection[preInitMap] = currentObservables;
     }
 
-    // here somewhere, we need to write the data out and clear the arrays
-
     observableLog.push_back(currentObservables);
     observableTimes.push_back(timePoint);
     //reactionLog.push_back(currentReactions);
@@ -181,6 +185,14 @@ int outputNFSimObservables_c(int seed){
 
 int outputNFSimObservablesF_c(const char* outputfilename){
     ofstream gdatFile;
+
+    if (observableFilesWrittenThisRun.find(outputfilename) == observableFilesWrittenThisRun.end()) {
+      // this file was not initialized yet, we need to remove it,
+      // no need to check whether it exists, function just returns nonzero code if removel was not succesfull
+      remove(outputfilename);
+
+      observableFilesWrittenThisRun.insert(outputfilename);
+    }
 
     gdatFile.open(outputfilename, ios_base::app); // appending to the file, the file is erased when simulation starts
 
