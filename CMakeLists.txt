@@ -33,7 +33,7 @@ set(INCLUDE_DIRS
 
 project(nfsim_c)
 
-add_definitions("-fPIC")
+add_definitions("-Wno-return-type -Wno-sign-compare  -fPIC")
 
 set(SRC_FILES
     src/nfsim_c.cpp
