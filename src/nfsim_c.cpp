@@ -443,6 +443,14 @@ int stepSimulationRxn_c(const char* rxn){
 }
 
 compartmentStruct getCompartmentInformation_c(const char* name){
+    if (strcmp(name, "") == 0) {
+      compartmentStruct result;
+      result.name = strdup("");
+      result.spatialDimensions = 3;
+      result.outside = strdup("");
+      return result;
+    }
+
     string nameStr(name);
     shared_ptr<Compartment> tmp = NFapi::getCompartmentInformation(nameStr);
     compartmentStruct result;
