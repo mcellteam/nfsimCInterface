@@ -60,6 +60,7 @@ int resetSystem_c(){
 
 int deleteNFSimSystem_c(){
     NFapi::deleteSystem();
+    return 0;
 }
 
 int initSystemXML_c(const char * initXML){
@@ -158,10 +159,13 @@ int logNFSimObservables_c(double timePoint, int seed){
       observableTimes.clear();
     }
 
+    return 0;
 }
 
 int logNFSimReactions_c(const char* reactionName){
     currentReactions[std::string(reactionName)] += 1;
+
+    return 0;
 }
 
 int outputNFSimObservables_c(int seed){
@@ -180,6 +184,7 @@ int outputNFSimObservables_c(int seed){
     getRnxGDatFilename(seedStr, rnxGDatFilename);
     outputNFSimReactionsF_c(rnxGDatFilename.c_str());
 
+    return 0;
 }
 
 
@@ -223,6 +228,7 @@ int outputNFSimObservablesF_c(const char* outputfilename){
 
     keys.clear();
 
+    return 0;
 }
 
 int outputNFSimReactionsF_c(const char* outputfilename){
@@ -236,6 +242,7 @@ int outputNFSimReactionsF_c(const char* outputfilename){
 
     keys.clear();
 
+    return 0;
 }
 
 
@@ -327,6 +334,8 @@ const char* extractSpeciesCompartmentFromNauty_c(const char* nauty){
 int delete_compartmentStructs(compartmentStruct compartment){
     free(compartment.name);
     free(compartment.outside);
+
+    return 0;
 }
 
 
