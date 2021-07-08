@@ -33,7 +33,9 @@ set(INCLUDE_DIRS
 
 project(nfsim_c)
 
-add_definitions("-Wno-return-type -Wno-sign-compare  -fPIC")
+if (NOT WIN32)
+  add_definitions("-Wno-return-type -Wno-sign-compare  -fPIC")
+endif()
 
 set(SRC_FILES
     src/nfsim_c.cpp
@@ -44,8 +46,10 @@ set(SRC_FILES
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${INCLUDE_DIRS})
 
-add_definitions("-Wno-deprecated-declarations")
-add_definitions(-std=c++11)
+if (NOT WIN32)
+  add_definitions("-Wno-deprecated-declarations")
+  add_definitions(-std=c++11)
+endif()
 
 
 # -- nfsimCInterface_static --
